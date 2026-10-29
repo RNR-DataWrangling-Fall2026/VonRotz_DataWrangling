@@ -1,0 +1,26 @@
+---
+title: "Week 10: Fish Analysis"
+format: gfm
+editor: visual
+---
+
+## Fish Analysis
+
+Load tidyverse
+
+```{r}
+library(tidyverse)
+
+fish_data <- read.csv("../data/Gaeta_etal_CLC_data.csv")
+
+head(fish_data)
+```
+
+Summary statistics for fish scale length.
+
+```{r}
+min_max_length <- fish_data |> 
+  summarise(min_scale_length=min(scalelength, na.rm = T),
+            max_scale_length= max(scalelength, na.rm=T),
+            mean_scale_length= mean(scalelength, narm=T))
+```
