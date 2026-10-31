@@ -40,7 +40,13 @@ getwd()
 write.csv(filtered_fish_data, file= file.path("../data", "filtered_fish_data.csv"))
 ```
 
+Question 4 (a-g): made plot, saved it "../data/visuals", rendered document, and committed new code
+
 ```{r}
 ggplot(fish_data, aes(x = scalelength)) +
-  geom_histogram()
+  geom_histogram(bins=80)+
+  labs(x= "Scale Length (mm)", y= "Count")+
+  theme_classic()
+ggsave(filename= file.path("../data/visuals", "scale_hist_by_length.jpg"))
+  
 ```
