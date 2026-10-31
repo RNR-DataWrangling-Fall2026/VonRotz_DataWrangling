@@ -4,23 +4,38 @@ format: gfm
 editor: visual
 ---
 
-## Fish Analysis
+## Fish Scale Analysis
 
-Load tidyverse
+Load the tidyverse and the dataset
 
 ```{r}
+#install.packages("tidyverse")
 library(tidyverse)
 
-fish_data <- read.csv("../data/Gaeta_etal_CLC_data.csv")
-
-head(fish_data)
+fish_data <- read_csv("../data/Gaeta_etal_CLC_data.csv")
 ```
 
-Summary statistics for fish scale length.
+Summary of fish scale statistics:
 
 ```{r}
-min_max_length <- fish_data |> 
-  summarise(min_scale_length=min(scalelength, na.rm = T),
-            max_scale_length= max(scalelength, na.rm=T),
-            mean_scale_length= mean(scalelength, narm=T))
+scale_statistics <- fish_data |>
+  group_by(lakeid) |>
+  summarize(min_scale_length = min(scalelength, na.rm = TRUE),
+            max_scale_length = max(scalelength, na.rm = TRUE),
+            mean_scale_length = mean(scalelength, na.rm = TRUE))
+```
+
+Create a new data frame that does not include fish with scale lengths of less than 1 mm and save new dataframe as CSV
+
+Use the `write_csv()` function to save this new data frame as a CSV file. It should be in an appropriate sub-directory.
+
+Commit this change to version control with a good commit message.
+
+Once you've made the commit, push the commit to your repo. Pop over to GitHub to ensure that the `.qmd` file and the new dataset are there.
+
+```{r}
+filtered_fish_data <- fish_data |>
+  filter(scalelength>=1)
+getwd()
+write.csv(filtered_fish_data, file= file.path("../data", "filtered_fish_data.csv"))
 ```
