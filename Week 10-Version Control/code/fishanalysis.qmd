@@ -39,3 +39,8 @@ filtered_fish_data <- fish_data |>
 getwd()
 write.csv(filtered_fish_data, file= file.path("../data", "filtered_fish_data.csv"))
 ```
+
+```{r}
+ggplot(fish_data, aes(x = scalelength)) +
+  geom_histogram()
+```
