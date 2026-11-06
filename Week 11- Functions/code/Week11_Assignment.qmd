@@ -43,10 +43,13 @@ a.  Copy the following function (which converts weights in pounds to weights in 
     Use the function to calculate how many grams there are in 3.75 pounds.
 
 ```{r}
-# convert_pounds_to_grams <- function(________) {
-#     grams <- 453.6 * pounds
-#     return(________)
-# }
+convert_pounds_to_grams <- function(pounds) {
+     grams <- 453.6 * pounds
+     return(grams)
+}
+
+convert_pounds_to_grams(pounds = 3.75)
+
 ```
 
 b.  Copy the following function (which converts temperatures in Fahrenheit to temperatures in Celsius) and replace the `________` with the needed commands and variable names so that the function returns the calculated value for Celsius. Remove the comments and run the code to add the function to your environment.
@@ -54,15 +57,35 @@ b.  Copy the following function (which converts temperatures in Fahrenheit to te
     Use the function to calculate the temperature in Celsius if the temperature in Fahrenheit is 80°F.
 
 ```{r}
-# convert_fahrenheit_to_celsius <- ________(________) {
-#     celsius <- (fahrenheit - 32) * 5 / 9
-#     ________(________)
-# }
+convert_fahrenheit_to_celsius <- function(fahrenheit) {
+     celsius <- (fahrenheit - 32) * 5 / 9
+     return(celsius)
+}
+
+convert_fahrenheit_to_celsius(fahrenheit = 80)
 ```
 
 c.  Write a function named `double` that takes a number as input and outputs that number multiplied by 2. Run it with an input of 512.
 
 d.  Write a function named `prediction` that takes three arguments, `x`, `a`, and `b`, and returns `y`. Use the following equation `a + b * x` (like a prediction from a simple linear model). Run it with `x` = 12, `a` = 6, and `b` = 0.8.
+
+```{r}
+#1c
+double <- function(number){
+  double <- (number*2)
+  return(double)
+}
+
+double(512)
+
+#1d
+prediction <- function(x, a, b){
+  equation <- a+b*x
+  return(equation)
+}
+
+prediction(x=12, a=6, b=0.8)
+```
 
 ### 2. Use and Modify (15 points)
 
@@ -87,6 +110,19 @@ b.  Create a new version of this function called `get_mass_from_length()` that t
 
     Use this function to estimate the mass of a *Sauropoda* (`a = 214.44`, `b = 1.46`) that is 26 m long.
 
+```{r}
+#2a
+get_mass_from_length_theropoda(16)
+
+#2b
+get_mass_from_length <- function(length, a, b){
+  mass <- a * length ^ b
+  return(mass)
+}
+get_mass_from_length(a=214.44, b=1.46, length=26)
+
+```
+
 ### 3. Writing Functions: Part 2 (15 points)
 
 a.  Copy the following function below (which converts weights in pounds to weights in grams and rounds them). Replace the `________` with the variable names for the input and output. Replace `__` with a number so that by default the function will round the output to one decimal place.
@@ -94,11 +130,12 @@ a.  Copy the following function below (which converts weights in pounds to weigh
     Use the function to calculate how many grams there are in 4.3 pounds using the default for the number of decimal places.
 
 ```{r}
-# convert_pounds_to_grams <- function(________, numdigits = __) {
-#   grams <- 453.6 * pounds
-#   rounded <- round(grams, digits = numdigits)
-#   return(________)
-# }
+ convert_pounds_to_grams <- function(pounds, numdigits = 1) {
+   grams <- 453.6 * pounds
+   rounded <- round(grams, digits = numdigits)
+   return(rounded)
+ }
+ convert_pounds_to_grams(4.3)
 ```
 
 b.  Write a function called `get_height_from_weight` that takes three arguments, `weight`, `a`, and `b`, and returns an estimate of `height` using `height <- a * weight ^ b` (a prediction from a power model). Give it default arguments of `a` = 12 and `b` = 0.38. There should be no default value for `weight`.
@@ -107,15 +144,50 @@ b.  Write a function called `get_height_from_weight` that takes three arguments,
 
 c.  The function in (b) assumes that the weight is provided in grams. Use the functions from (3a) and (3b) in combination to estimate the height for an animal that weighs 2 pounds using the default value for `a`, but changing the value for `b` to 0.32.
 
+```{r}
+#3b
+get_height_from_weight <- function(weight, a=12, b=0.38){
+  height <- a*weight^b
+  return(height)
+}
+get_height_from_weight(42)
+
+#3c
+                
+get_height_from_weight <- function(pounds, a=12, b=0.32){
+  weight_grams <- 453.6 * pounds
+  height <- a*weight_grams^b
+  return(height)
+}
+
+get_height_from_weight(2)
+
+
+```
+
 ### 4. Default Arguments (15 points)
 
 This is a follow up to `Question 2: Use and Modify`.
 
 Allowing `a` and `b` to be passed as arguments to `get_mass_from_length()` made the function more flexible, but for some types of dinosaurs we don't have specific values of `a` and `b` and so we have to use general values that can be applied to a number of different species.
 
-a. Rewrite your `get_mass_from length()` function from Question 2 so that its arguments have default values of `a = 39.9` and `b = 2.6` (the average values from [Seebacher 2001](http://www.jstor.org/stable/4524171)).
+a.  Rewrite your `get_mass_from length()` function from Question 2 so that its arguments have default values of `a = 39.9` and `b = 2.6` (the average values from [Seebacher 2001](http://www.jstor.org/stable/4524171)).
 b.  Use the rewritten function from (a) to estimate the mass of a Sauropoda (`a = 214.44`, `b = 1.46`) that is 22 m long.
 c.  Use this function to estimate the mass of a dinosaur from an unknown taxonomic group that is 16m long. Only pass the function `length`, not `a` and `b`, so that the default values are used.
+
+```{r}
+#4a
+get_mass_from_length <- function(length, a=39.9, b=2.6){
+  mass <- a * length ^ b
+  return(mass)
+}
+
+#4b
+get_mass_from_length(22, 214.44, 1.46)
+
+#4c
+get_mass_from_length(16)
+```
 
 ### 5. Combining Functions (20 points)
 
@@ -127,6 +199,22 @@ Write a function called `convert_kg_to_pounds` that converts kilograms into poun
 
 Using a pipe, connect this new function and your `get_mass_from_length()` function from Question 4 to estimate the weight, in pounds, of a 12 m long Stegosaurus with `a = 10.95` and `b = 2.64` (The estimated `a` and `b` values for *Stegosauria* from [Seebacher 2001](http://www.jstor.org/stable/4524171)).
 
+```{r}
+get_mass_from_length <- function(length, a=39.9, b=2.6){
+  mass <- a * length ^ b
+  return(mass)
+}
+convert_kg_to_pounds <- function(kg){
+  pounds <- kg*2.205
+  return(pounds) 
+} 
+get_mass_from_length(a=10.95, b=2.64, length=12) |> 
+  convert_kg_to_pounds()
+
+#Gemini 11/3 to find out how to connect with |> , I kept trying to pipe the formulas
+
+```
+
 ### 6. Writing Tidyverse Functions (20 points)
 
 First, load either the `tidyverse` or `ggplot2`, if you haven't already done so in this document.
@@ -134,6 +222,8 @@ First, load either the `tidyverse` or `ggplot2`, if you haven't already done so 
 Run the code below to create a data frame named `count_data` with columns named `state`, `count`, `area`, and `site`.
 
 ```{r}
+library(tidyverse)
+
 count_data <- data.frame(
   state = c("AZ", "AZ", "AZ", "AZ", "NM", "NM", "NM", "NM", "NV", "NV", "NV", "NV"),
   site = c("A", "B", "C", "D", "A", "B", "C", "D", "A", "B", "C", "D"),
@@ -155,6 +245,36 @@ b.  Use the function from (a) to make a scatter plot of count as a function of a
 c.  Create a new function based on the function you created in (a); in this new function, allow the x and y axes to be any column in the data frame, specified as arguments in the function. This means you will also need to be able to specify the axis label names; in total, your function will need six different arguments!
 
     Remake the same plot as from (b) using your new function. Save your plot as a .png file using `ggsave()` in the appropriate sub-directory.
+
+```{r}
+
+#6a
+plot_count_data <- function(df, color_col){
+  ggplot(count_data,aes(x=area, y=count, color={{color_col}}))+
+    geom_point(size=3)+
+    labs(x="Area (ha)", y= "Number of Individuals")+
+    theme_classic()
+}
+plot_count_data(count_data, state)
+ggsave("../data/plots/count_area_state.jpg")
+
+#6b
+plot_count_data(count_data, site)
+ggsave("../data/plots/count_area_site.jpg")
+
+#6c- Create a new function based on the function you created in (a); in this new function, allow the x and y axes to be any column in the data frame, specified as arguments in the function. This means you will also need to be able to specify the axis label names; in total, your function will need six different arguments!
+
+#Remake the same plot as from (b) using your new function. Save your plot as a .png file using ggsave() in the appropriate sub-directory.
+plot_count_data_2 <- function(df, x_axis, y_axis, label_x, label_y, color_col){
+  ggplot(df, aes(x={{x_axis}}, y={{y_axis}}, color={{color_col}}))+
+    geom_point(size=3)+
+    labs(x= label_x, y= label_y)+
+    theme_classic()
+}
+
+plot_count_data_2(count_data, area, count,"Area(ha)", "Individual Count", site)
+ggsave("../data/plots/count_area_site_2.jpg")
+```
 
 ### 7. Portal Species Time-Series Challenge (OPTIONAL)
 
