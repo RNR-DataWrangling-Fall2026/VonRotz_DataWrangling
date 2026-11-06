@@ -281,12 +281,12 @@ ggsave("../data/plots/count_area_site_2.jpg")
 If surveys.csv, species.csv, and plots.csv are not available in your workspace download them (modify the `destfile` arguments to point to the correct sub-directory):
 
 ```{r}
-# download.file(url = "https://ndownloader.figshare.com/files/2292172",
-#   destfile = "surveys.csv")
-# download.file(url = "https://ndownloader.figshare.com/files/3299474",
-#   destfile = "plots.csv")
-# download.file(url = "https://ndownloader.figshare.com/files/3299483",
-#   destfile = "species.csv")
+download.file(url = "https://ndownloader.figshare.com/files/2292172",
+   destfile = "../data/surveys.csv")
+ download.file(url = "https://ndownloader.figshare.com/files/3299474",
+   destfile = "../data/plots.csv")
+ download.file(url = "https://ndownloader.figshare.com/files/3299483",
+   destfile = "../data/species.csv")
 ```
 
 a.  Write a function that does the following:
@@ -305,6 +305,49 @@ b.  Use your function, and the data in `surveys.csv` and `species.csv`, to plot 
 c.  Use your function, and the data in `surveys.csv` and `species.csv`, to plot the time-series for `time = month`, `genus_name = "Chaetodipus"` and `species_name = "penicillatus"` (this plot will show the average seasonal pattern of *Chaetodipus penicillatus* abundances)
 
 d.  Use your function, and the data from `plots.csv`, `surveys.csv` and `species.csv`, to plot the time-series for `time = year`, `genus_name = "Chaetodipus"` and `species_name = "baileyi"` only on the "Control" plots.
+
+```{r}
+#7a- Gemini 11/6/26
+library(tidyverse)
+species <- read.csv("../data/species.csv")
+surveys <- read.csv("../data/surveys.csv")
+plots <- read.csv("../data/plots.csv")
+
+species_plot <- function(df_1, df_2, time_col, genus, species, label_x){
+  plot_data <- df_1 |> 
+    inner_join(df_2, by="species_id") |> 
+    filter(genus=={{genus}}, species=={{species}}) |> 
+    count({{time_col}}, name="count") 
+  
+  ggplot(plot_data, aes(x={{time_col}}, y=count, group=1))+
+    geom_line(color= "skyblue", linewidth = 1)+
+    geom_point(color= "blue", size=2)+
+    labs(x= label_x, y="Number of Individuals")+
+    theme_classic()
+}
+
+#7b  
+species_plot(surveys, species, year, "Dipodomys", "merriami", "Year")
+
+#7c 
+species_plot(surveys, species, month, "Chaetodipus", "penicillatus", "Month")
+
+#7d- Gemini 11/6/26
+year_control_plot <- function(df_1, df_2, df_3, time_col, genus, species, label_x, plot_type){
+  plot_data <- df_1 |> 
+    inner_join(df_2, by=join_by(species_id)) |> 
+    inner_join(df_3, by=join_by(plot_id)) |> 
+    filter(genus=={{genus}}, species=={{species}}, plot_type=={{plot_type}}) |> 
+    count({{time_col}}, name="count") 
+  
+  ggplot(plot_data, aes(x={{time_col}}, y=count, group=1))+
+    geom_line(color= "skyblue", linewidth = 1)+
+    geom_point(color= "blue", size=2)+
+    labs(x= label_x, y="Number of Individuals")+
+    theme_classic()
+}
+year_control_plot(surveys, species, plots, year, "Chaetodipus", "baileyi", "Year", "Control")
+```
 
 ### 8. Documenting Your Functions (OPTIONAL)
 
