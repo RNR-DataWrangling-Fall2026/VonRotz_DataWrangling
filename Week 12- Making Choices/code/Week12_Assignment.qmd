@@ -226,6 +226,33 @@ if (name == "Stegosauria") {
 } else if ...
 ```
 
+```{r}
+
+get_mass_from_length_by_name <- function(name, length){
+  if(name == "Stegosauria"){
+      mass <- 10.95 * length ^ 2.64
+  } else if(name == "Theropoda"){
+    mass <- 0.73 * length ^ 3.63
+  } else if (name == "Sauropoda"){
+    mass <- 214.44 * length ^ 1.46
+  }else {
+    mass <- NA
+  }
+  return(mass)
+}
+
+#4a
+get_mass_from_length_by_name("Stegosauria", 10)
+#4b
+get_mass_from_length_by_name("Theropoda", 8)
+#4c
+get_mass_from_length_by_name("Sauropoda", 12)
+#4d
+get_mass_from_length_by_name("Ankylosauria", 13)
+
+
+```
+
 ### 5. Putting It All Together: Portal Rodents (30 points)
 
 In this question, you will combine choice functions with joins, strings, and plotting. Load the `tidyverse` if you haven't already.
@@ -233,10 +260,11 @@ In this question, you will combine choice functions with joins, strings, and plo
 Download the following Portal data tables using code below (modify the `destfile` arguments to point to the correct sub-directory) to get started.
 
 ```{r}
-# download.file(url = "https://ndownloader.figshare.com/files/2292172",
-#   destfile = "surveys.csv")
-# download.file(url = "https://ndownloader.figshare.com/files/3299483",
-#   destfile = "species.csv")
+ #download.file(url = "https://ndownloader.figshare.com/files/2292172",
+  # destfile = 'Week 12-Making Choices/data/surveys.csv')
+ #download.file(url = "https://ndownloader.figshare.com/files/3299483",
+   #destfile = "Week 12-Making Choices/data/species.csv")
+ 
 ```
 
 a.  Join `surveys` and `species` together so that each survey record has the genus, species, and taxa information. Keep only rodents (`taxa` is "Rodent"). Then, use a `stringr` function to add a column called `scientific_name` that combines `genus` and `species` with a space between them (e.g., "Dipodomys merriami"). Save the result as an object called `rodents`.
@@ -261,6 +289,55 @@ d.  Use `case_when` inside a `mutate` to add a column called `weight_class` with
 e.  Using `rodents`, remove the individuals with an "unknown" weight class and count the number of individuals in each `year`, `season`, and `weight_class`. Then, make a line plot with `year` on the x-axis, the count on the y-axis, lines colored by `weight_class`, and a separate panel for each `season`. Give your plot informative axis labels and use a theme of your choice.
 
     In a sentence or two, describe one pattern you see in the plot.
+
+```{r}
+surveys <- read.csv("../data/surveys.csv")
+species <- read.csv("../data/species.csv")
+#5a-Gemini (11/13/26)
+rodents <- surveys |>  
+  left_join(species, join_by("species_id")) |> 
+    filter (taxa=="Rodent") |> 
+    mutate(scientific_name = str_c(genus, species, sep =" "),
+           .after = species_id)
+
+#5b- 
+rodents <- rodents |> 
+  mutate(id_level= if_else(str_detect(scientific_name, "sp\\."),
+                           true= "genus",
+                           false= "species"),
+         .after = scientific_name)
+
+#5c
+rodents <- rodents |> 
+  mutate(season = if_else(month %in% 4:9,
+                          true= "warm",
+                          false= "cool"),
+         .after = month)
+
+#5d- Gemini (11/13/26) 
+rodents <- rodents |> 
+  mutate(weight_class= case_when(is.na(weight) ~ "unknown",
+                                 weight < 20 ~ "small",
+                                 weight < 50 ~ "medium",
+                                 .default= "large"),
+         .after = weight)
+
+#A lot of the weights are "NA" in the data table, and of we had left out the argument, it would have labeled them all as "large" through our ".default" argument. We could have made an argument of '50< ~ "large"' and made the ".default=NA" which would have (probably) fixed the issue.
+
+#5e-Using rodents, remove the individuals with an "unknown" weight class and count the number of individuals in each year, season, and weight_class. Then, make a line plot with year on the x-axis, the count on the y-axis, lines colored by weight_class, and a separate panel for each season. Give your plot informative axis labels and use a theme of your choice.
+library(ggplot2)
+rodents_summary <- rodents |> 
+  filter(!weight_class== "unknown") |>
+  count(year, season, weight_class)
+  
+ggplot(rodents_summary, aes(x= year, y=n, color= weight_class, group= weight_class))+
+  geom_line()+
+  facet_wrap(~season)+
+  labs(x="Year", y= "Individual Count", color= "Weight Class")+
+  theme_bw()
+ggsave("../data/rodent_summary_plot.jpg")
+#Medium sized roudents are more numerous, all size classes follow similar trends across years, there isnt a huge difference between seasons and individual counts, large individuals have had low individual counts since the 80's
+```
 
 ### 6. Challenge: A "Safe" Tidyverse Function (OPTIONAL)
 
