@@ -84,21 +84,104 @@ d.  Now use the `case_when` function inside a `mutate` function to create a new 
 
     I've placed my new column next to the size column for the sake of the answer key; you don't need to do this.
 
+```{r}
+library(tidyverse)
+library(lterdatasampler)
+
+crab_size <- 17
+#2a
+if_else(crab_size== ">20",
+        true= "large",
+        false="small")
+
+#2b- Gemini (11/12/26)
+case_when(crab_size >=20 ~ "large",
+          crab_size >=10 ~ "medium",
+          crab_size <10 ~ "small")
+
+#2c
+head(pie_crab) |> 
+  mutate(size_class = case_when(size >=20 ~ "large",
+                          size <=20 ~ "small",
+                          .default = NA),
+         .after = size)
+
+#2d
+head(pie_crab) |> 
+  mutate(size_category3 = case_when(size >=20 ~ "large",
+                                size >=10 ~ "medium",
+                                size <=10 ~ "small",
+                                .default = NA),
+         .after = size)
+```
+
 ### 3. If/Else Statements (20 points)
 
 a.  Complete the following `if` statement so that if `age_class` is equal to "sapling" it sets `y` to 10, if `age_class` is equal to "seedling" it sets `y` to 5, and if `age_class` is something else it sets `y` to 0.
 
 ```{r}
+#3a
 age_class <- "adult"
-if (){
 
+if (age_class=="sapling"){
+  y <- 10
+}else if(age_class=="seedling"){
+  y <- 5
+} else{
+  y <- 0
 }
+
 y
 ```
 
 b.  Convert your conditional statement from (a) into a function that takes `age_class` as an argument and returns `y`. Call this function 5 times, once with each of the following values for `age_class`: "sapling", "seedling", "adult", "mature", "established".
 
 c.  Write a function called `predict_value` that takes a single argument `x`. If `x` is greater than 0 and less than 15, return `y = 6 + 0.8 * x`. If `x` is greater than or equal to 15 and less than 30, return `y = 5 + 0.75 * x`. In all other cases, return `y = NA`. Call the function three times, with `5`, `26`, and `-2` as the input.
+
+```{r}
+#3b
+age_class <- "adult"
+
+find_y <- function(age_class){
+  if(age_class == "sapling"){
+    y <- 10
+    }else if (age_class== "seedling"){
+      y <- 5
+    }else if (age_class == "adult"){
+      y <- 0
+    }else if(age_class == "mature"){
+      y <- 0
+    }else if (age_class == "established"){
+      y <- 0
+    } else{
+      y <- NA
+    }
+  return(y)
+}
+
+find_y("seedling")
+find_y("sapling")
+find_y("adult")
+find_y("mature")
+find_y("established")
+
+#3c- Gemini (11/12/26)
+
+predict_value <- function(x){
+  if(x > 0 & x < 15){
+    y <- 6 + 0.8 * x
+  }else if( x>15 & x<30){
+    y <- 5 + 0.75 * x
+  }else{
+    y <- NA
+  }
+  return(y)
+}
+
+predict_value(5)
+predict_value(26)
+predict_value(-2)
+```
 
 ### 4. Size Estimates by Name (20 points)
 
