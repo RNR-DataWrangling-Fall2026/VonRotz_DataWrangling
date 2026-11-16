@@ -57,13 +57,13 @@ e.  `x` times `w` is between 13.2 and 13.5
 #1a
 "green" %in% c("red", "blue", "green")
 #1b
-"purple" %in% c("red", "blue", "green")
+!("purple" %in% c("red", "blue", "green"))
 #1c
 masses > 40
 #1d
 w>x | y>z
 #1e
-13.2< x*w <13.5
+13.2< x*w & x*w <13.5
 ```
 
 ### 2. Using `dplyr` Choice Functions (20 points)
@@ -90,7 +90,7 @@ library(lterdatasampler)
 
 crab_size <- 17
 #2a
-if_else(crab_size== ">20",
+if_else(crab_size== "=>20",
         true= "large",
         false="small")
 
@@ -293,6 +293,7 @@ e.  Using `rodents`, remove the individuals with an "unknown" weight class and c
 ```{r}
 surveys <- read.csv("../data/surveys.csv")
 species <- read.csv("../data/species.csv")
+
 #5a-Gemini (11/13/26)
 rodents <- surveys |>  
   left_join(species, join_by("species_id")) |> 
