@@ -205,30 +205,35 @@ b.  Add code to the loop to calculate the minimum and maximum latitude in the fi
     Show the data frame as output.
 
 ```{r}
-unzip(zipfile = "../data/individual_collar_data.zip",
-      exdir = "../data/" )
-collar_files <- list.files(path="../data/",
-                         pattern="collar-data.*.txt")
-library(ggplot2)
+#unzip(zipfile = "../data/individual_collar_data.zip",
+  #    exdir = "../data/" )
+#collar_files <- list.files(path="../data/",
+ #                        pattern="collar-data.*.txt")
+#library(ggplot2)
 
-#3a
+#3a- Gemini 11/24/26: Need to review
 num_files <- length(collar_files)
 
-collar_data <- data.frame(file_name= vector("character", num_files),
-                          collar=vector("numeric", num_files),
-                          lat = vector("numeric", num_files),
-                          long = vector("numeric", num_files))
-for(i in 1:num_files){
-  filename <- collar_files[i]
+collar_data <- data.frame(file_name = collar_files,
+                          min_lat =  vector("numeric", num_files))
+for(i in 1: nrow(collar_data)){
+  filename <- collar_data$file_name[i]
   collar_info <-  read.csv(paste0("../data/", filename))
+
+
 
   collar_plot <- ggplot(data = collar_info, aes(x=long, y=lat))+
     geom_path()+
-    labs(title=)
+    labs(title=filename)
+  
+  print(collar_plot)
+#3b
+  collar_data$min_lat[i] <- min(collar_info$lat)
+  collar_data$max_lat[i] <- max(collar_info$lat)
+
+  collar_data  
 }
 
-
-#3b
 
 ```
 
@@ -243,8 +248,17 @@ a.  Write a function that determines if a sequence of base pairs is DNA, RNA, or
     *HINT: Remember our work with character strings and the `stringr` package from the `tidyverse` (Week 7)?*
 
 ```{r}
+library(stringr)
 # write your function here
-
+dna_or_rna <- function (sequence){
+  if(str_detect(sequence, "u")){
+    return("RNA")
+  }else if(str_detect(sequence, "t")){
+    return("DNA")
+  }else{
+    return("UNKNOWN") 
+  }
+}
 ```
 
 b.  Use the function to determine the sequence type for the following sequences.
@@ -253,6 +267,11 @@ b.  Use the function to determine the sequence type for the following sequences.
 seq1 <- "ttgaatgccttacaactgatcattacacaggcggcatgaagcaaaaatatactgtgaaccaatgcaggcg"
 seq2 <- "gauuauuccccacaaagggagugggauuaggagcugcaucauuuacaagagcagaauguuucaaaugcau"
 seq3 <- "gaaagcaagaaaaggcaggcgaggaagggaagaagggggggaaacc"
+
+#3b
+dna_or_rna(seq1)
+dna_or_rna(seq2)
+dna_or_rna(seq3)
 ```
 
 Before tackling the next questions (c-g), run the following code chunk to create a vector called sequences.
@@ -267,9 +286,49 @@ sequences <- c("ttgaatgccttacaactgatcattacacaggcggcatgaagcaaaaatatactgtgaaccaatg
 
 c.  Use the function you wrote and a `for` loop to create a vector of sequence types for the values in sequences
 
+    ```{r}
+    seq_types <- vector("character", length(sequences))
+    for(i in 1: length(sequences)){
+      seq_types[i] <- dna_or_rna(sequences[i])
+    }
+    seq_types
+    ```
+
 d.  Use the function and a `for` loop to create a data frame that includes a column of sequences and a column of their types.
 
+    ```{r}
+    seq_types <- vector("character", length(sequences))
+
+    for(i in 1: length(sequences)){
+      seq_types[i] <- dna_or_rna(sequences[i])
+    }
+
+    amino_acid_seq <- data.frame(sequences= sequences,
+                                 seq_types= seq_types)
+
+    amino_acid_seq
+    ```
+
 e.  This time, instead of using the function, place the `if`-`else` portion of your function directly into the `for` loop. Modify the code so that it successfully creates the same output as (d) above. Remember to "reset" the data frame that will hold the output so it is empty before you start your loop.
+
+    ```{r}
+    amino_acid_seq <- data.frame(sequences=sequences,
+                                 seq_types= NA)
+
+    for(i in 1: nrow(amino_acid_seq)){
+      if(str_detect(amino_acid_seq$sequences[i], "u")){
+        seq_type <- "RNA"
+      }else if(str_detect(amino_acid_seq$sequences[i], "t")){
+        seq_type <- "DNA"
+      }else{
+        seq_type <- "UNKNOWN" 
+      }
+      amino_acid_seq$seq_types[i]<- seq_type
+    }
+    amino_acid_seq
+
+
+    ```
 
 f.  OPTIONAL: Use the function and `sapply` to create a vector of sequence types for the values in sequences
 
